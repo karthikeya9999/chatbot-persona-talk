@@ -107,15 +107,18 @@ Keep your responses conversational, authentic, and around 2-3 sentences unless a
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
-      // Build conversation history for Gemini
-      const history = messages.map(msg => ({
-        role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }],
-      }));
+      // Build conversation history for Gemini - include system prompt as first message
+      const history = [
+        { role: 'user', parts: [{ text: 'Please act according to this system prompt: ' + systemPrompt }] },
+        { role: 'model', parts: [{ text: 'I understand. I will act as Lovable, the AI assistant for web development, and respond to personal questions according to the guidelines you provided.' }] },
+        ...messages.map(msg => ({
+          role: msg.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: msg.content }],
+        }))
+      ];
 
       const chat = model.startChat({
         history,
-        systemInstruction: systemPrompt,
       });
 
       const result = await chat.sendMessage(transcript);
