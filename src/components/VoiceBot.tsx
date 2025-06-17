@@ -6,7 +6,7 @@ import { Mic, MicOff, Volume2, VolumeX, Settings, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Instructions from '@/components/Instructions';
 import Footer from '@/components/Footer';
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -73,7 +73,7 @@ Keep your responses conversational, authentic, and around 2-3 sentences unless a
     if (!apiKey) {
       toast({
         title: "API Key Required",
-        description: "Please enter your OpenAI API key in settings.",
+        description: "Please enter your Google API key in settings.",
         variant: "destructive",
       });
       return;
@@ -89,23 +89,22 @@ Keep your responses conversational, authentic, and around 2-3 sentences unless a
     setIsProcessing(true);
 
     try {
-      const openai = new OpenAI({
-        apiKey: apiKey,
-        dangerouslyAllowBrowser: true,
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+
+      // Build conversation history for Gemini
+      const history = messages.map(msg => ({
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.content }],
+      }));
+
+      const chat = model.startChat({
+        history,
+        systemInstruction: systemPrompt,
       });
 
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4.1-2025-04-14",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages.map(msg => ({ role: msg.role, content: msg.content })),
-          { role: "user", content: transcript }
-        ],
-        temperature: 0.7,
-        max_tokens: 150,
-      });
-
-      const response = completion.choices[0].message.content || "I'm sorry, I couldn't generate a response.";
+      const result = await chat.sendMessage(transcript);
+      const response = result.response.text() || "I'm sorry, I couldn't generate a response.";
       
       const assistantMessage: Message = {
         role: 'assistant',
@@ -117,7 +116,7 @@ Keep your responses conversational, authentic, and around 2-3 sentences unless a
       speakText(response);
 
     } catch (error) {
-      console.error('OpenAI API error:', error);
+      console.error('Google API error:', error);
       toast({
         title: "Error",
         description: "Failed to get response from AI. Please check your API key.",
@@ -257,16 +256,16 @@ Keep your responses conversational, authentic, and around 2-3 sentences unless a
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">OpenAI API Key</label>
+                  <label className="text-sm font-medium">Google API Key</label>
                   <Input
                     type="password"
-                    placeholder="Enter your OpenAI API key"
+                    placeholder="Enter your Google API key"
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
                   />
                   <p className="text-xs text-muted-foreground">
                     Your API key is stored locally and used only for this session.
-                    Get one at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline">OpenAI Platform</a>
+                    Get one at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="underline">Google AI Studio</a>
                   </p>
                 </div>
               </div>

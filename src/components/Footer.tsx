@@ -9,18 +9,18 @@ const Footer = () => {
           <div className="flex justify-center items-center gap-2 text-sm text-muted-foreground">
             <span>Built with</span>
             <Heart size={14} className="text-red-500" />
-            <span>using React, TypeScript, OpenAI API & Web Speech API</span>
+            <span>using React, TypeScript, Google Gemini API & Web Speech API</span>
           </div>
           
           <div className="flex justify-center items-center gap-6 text-sm">
             <a
-              href="https://platform.openai.com/docs"
+              href="https://ai.google.dev/gemini-api/docs"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <Globe size={14} />
-              OpenAI Docs
+              Gemini API Docs
             </a>
             <a
               href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API"

@@ -14,8 +14,8 @@ const Instructions = () => {
         <div className="flex items-start gap-3">
           <Key size={16} className="mt-0.5 flex-shrink-0" />
           <div>
-            <p className="font-medium">1. Add your OpenAI API Key</p>
-            <p>Click the settings button (⚙️) and enter your OpenAI API key. Get one at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline font-medium">platform.openai.com</a></p>
+            <p className="font-medium">1. Add your Google API Key</p>
+            <p>Click the settings button (⚙️) and enter your Google API key. Get one at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="underline font-medium">Google AI Studio</a></p>
           </div>
         </div>
         
