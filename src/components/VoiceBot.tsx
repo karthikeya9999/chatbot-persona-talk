@@ -15,7 +15,7 @@ interface Message {
 }
 
 const VoiceBot = () => {
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useState('AIzaSyB2SJgh0V5iHRzKqDhVIp2dt4Vr7JvbzdY');
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -24,6 +24,21 @@ const VoiceBot = () => {
   
   const recognitionRef = useRef<any>(null);
   const { toast } = useToast();
+
+  // Load API key from localStorage on mount
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem('googleApiKey');
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    }
+  }, []);
+
+  // Save API key to localStorage when it changes
+  useEffect(() => {
+    if (apiKey) {
+      localStorage.setItem('googleApiKey', apiKey);
+    }
+  }, [apiKey]);
 
   // Initialize speech recognition
   useEffect(() => {
